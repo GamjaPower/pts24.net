@@ -1,6 +1,7 @@
 // Korean phrases
 
 export default {
+  com_ui_prompt_hub: '프롬프트 허브',
   com_ui_examples: '예시',
   com_ui_new_chat: '새 채팅',
   com_ui_happy_birthday: '내 첫 생일이야!',

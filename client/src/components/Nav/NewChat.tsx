@@ -1,7 +1,8 @@
-import { Search } from 'lucide-react';
+import { LucideSquare, Search, Square, SquareIcon, TerminalSquareIcon } from 'lucide-react';
 import { useRecoilValue } from 'recoil';
 import { useNavigate } from 'react-router-dom';
 import { useGetEndpointsQuery } from 'librechat-data-provider/react-query';
+import type { TConversation } from 'librechat-data-provider';
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '~/components/ui';
 import { getEndpointField, getIconEndpoint, getIconKey } from '~/utils';
 import { icons } from '~/components/Chat/Menus/Endpoints/Icons';
@@ -9,7 +10,6 @@ import ConvoIconURL from '~/components/Endpoints/ConvoIconURL';
 import { useLocalize, useNewConvo } from '~/hooks';
 import { NewChatIcon } from '~/components/svg';
 import store from '~/store';
-import type { TConversation } from 'librechat-data-provider';
 
 const NewChatButtonIcon = ({ conversation }: { conversation: TConversation | null }) => {
   const searchQuery = useRecoilValue(store.searchQuery);
@@ -70,11 +70,20 @@ export default function NewChat({
 
   const { conversation } = store.useCreateConversationAtom(index);
 
-  const clickHandler = (event: React.MouseEvent<HTMLAnchorElement>) => {
+  const newChatHandler = (event: React.MouseEvent<HTMLAnchorElement>) => {
     if (event.button === 0 && !(event.ctrlKey || event.metaKey)) {
       event.preventDefault();
       newConvo();
       navigate('/c/new');
+      toggleNav();
+    }
+  };
+
+  const promptHandler = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (event.button === 0 && !(event.ctrlKey || event.metaKey)) {
+      event.preventDefault();
+      newConvo();
+      navigate('/prompt-hub');
       toggleNav();
     }
   };
@@ -87,7 +96,7 @@ export default function NewChat({
             <a
               href="/"
               data-testid="nav-new-chat-button"
-              onClick={clickHandler}
+              onClick={newChatHandler}
               className="group flex h-10 items-center gap-2 rounded-lg px-2 font-medium hover:bg-gray-200 dark:hover:bg-gray-700"
             >
               <NewChatButtonIcon conversation={conversation} />
@@ -105,6 +114,20 @@ export default function NewChat({
                     {localize('com_ui_new_chat')}
                   </TooltipContent>
                 </span>
+              </div>
+            </a>
+          </div>
+          {/* 프롬프트 모음 */}
+          <div className="pb-0.5 last:pb-0" tabIndex={0} style={{ transform: 'none' }}>
+            <a
+              href="/prompt-hub"
+              data-testid="nav-prompt-hub-button"
+              onClick={promptHandler}
+              className="group flex h-10 items-center gap-2 rounded-lg px-2 font-medium hover:bg-gray-200 dark:hover:bg-gray-700"
+            >
+              <TerminalSquareIcon size={20} className="text-gray-950" />
+              <div className="text-token-text-primary grow overflow-hidden text-ellipsis whitespace-nowrap text-sm">
+                {localize('com_ui_prompt_hub')}
               </div>
             </a>
           </div>

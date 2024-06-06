@@ -7,12 +7,15 @@ import {
   ApiErrorWatcher,
 } from '~/components/Auth';
 import { AuthContextProvider } from '~/hooks/AuthContext';
+import ChatView from '~/components/Chat/ChatView';
+import TestView from '~/components/Chat/TestView';
 import StartupLayout from './Layouts/Startup';
 import LoginLayout from './Layouts/Login';
 import ShareRoute from './ShareRoute';
 import ChatRoute from './ChatRoute';
 import Search from './Search';
 import Root from './Root';
+import PromptHub from './PromptHub';
 
 const AuthLayout = () => (
   <AuthContextProvider>
@@ -64,6 +67,10 @@ export const router = createBrowserRouter([
           {
             index: true,
             element: <Navigate to="/c/new" replace={true} />,
+          },
+          {
+            path: 'prompt-hub',
+            element: <PromptHub />,
           },
           {
             path: 'c/:conversationId?',
