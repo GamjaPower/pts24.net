@@ -1,7 +1,7 @@
 import debounce from 'lodash/debounce';
 import { useEffect, useRef, useCallback } from 'react';
 import { isAssistantsEndpoint } from 'librechat-data-provider';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState, useRecoilState } from 'recoil';
 import type { TEndpointOption } from 'librechat-data-provider';
 import type { KeyboardEvent } from 'react';
 import { forceResize, insertTextAtCursor, getAssistantName } from '~/utils';
@@ -42,6 +42,7 @@ export default function useTextarea({
   } = useChatContext();
 
   const setShowMentionPopover = useSetRecoilState(store.showMentionPopoverFamily(index));
+  const [activePrompt, setActivePrompt] = useRecoilState(store.activePromptByIndex(index));
 
   const { conversationId, jailbreak, endpoint = '', assistant_id } = conversation || {};
   const isNotAppendable =
@@ -52,6 +53,14 @@ export default function useTextarea({
   const assistant =
     isAssistantsEndpoint(endpoint) && assistantMap?.[endpoint ?? '']?.[assistant_id ?? ''];
   const assistantName = (assistant && assistant?.name) || '';
+
+  useEffect(() => {
+    if (activePrompt && textAreaRef.current) {
+      insertTextAtCursor(textAreaRef.current, activePrompt);
+      forceResize(textAreaRef.current);
+      setActivePrompt(undefined);
+    }
+  }, [activePrompt, setActivePrompt, textAreaRef]);
 
   // auto focus to input, when enter a conversation.
   useEffect(() => {
@@ -119,7 +128,7 @@ export default function useTextarea({
 
       if (textAreaRef.current?.getAttribute('placeholder') !== placeholder) {
         textAreaRef.current?.setAttribute('placeholder', placeholder);
-        forceResize(textAreaRef);
+        forceResize(textAreaRef.current);
       }
     };
 
@@ -163,6 +172,7 @@ export default function useTextarea({
       }
 
       const isNonShiftEnter = e.key === 'Enter' && !e.shiftKey;
+      const isCtrlEnter = e.key === 'Enter' && e.ctrlKey;
 
       if (isNonShiftEnter && filesLoading) {
         e.preventDefault();
@@ -172,13 +182,14 @@ export default function useTextarea({
         e.preventDefault();
       }
 
-      if (e.key === 'Enter' && !enterToSend && textAreaRef.current) {
+      if (e.key === 'Enter' && !enterToSend && !isCtrlEnter && textAreaRef.current) {
+        e.preventDefault();
         insertTextAtCursor(textAreaRef.current, '\n');
-        forceResize(textAreaRef);
+        forceResize(textAreaRef.current);
         return;
       }
 
-      if (isNonShiftEnter && !isComposing?.current) {
+      if ((isNonShiftEnter || isCtrlEnter) && !isComposing?.current) {
         const globalAudio = document.getElementById(globalAudioId) as HTMLAudioElement;
         if (globalAudio) {
           console.log('Unmuting global audio');
