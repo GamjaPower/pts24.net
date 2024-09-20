@@ -74,12 +74,23 @@ router.get(
 router.get(
   '/openid',
   passport.authenticate('openid', {
-    session: false,
+    session: true,
   }),
 );
 
 router.get(
   '/openid/callback',
+  (req, res, next) => {
+    console.log('openid/callback');
+    const sessions = req.sessionStore.sessions;
+    const sessionKeys = Object.keys(sessions);
+    const lastSessionKey = sessionKeys[sessionKeys.length - 1];
+    const lastSession = JSON.parse(sessions[lastSessionKey]);
+    const oidcData = lastSession['oidc:login.microsoftonline.com'];
+    req.session['oidc:login.microsoftonline.com'] = oidcData;
+    console.log('oidcData:', oidcData);
+    next();
+  },
   passport.authenticate('openid', {
     failureRedirect: `${domains.client}/login`,
     failureMessage: true,

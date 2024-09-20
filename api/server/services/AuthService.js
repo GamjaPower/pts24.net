@@ -346,7 +346,7 @@ const setAuthTokens = async (userId, res, sessionId = null) => {
       expires: new Date(refreshTokenExpires),
       httpOnly: true,
       secure: isProduction,
-      sameSite: 'strict',
+      sameSite: 'none',
     });
 
     return token;
