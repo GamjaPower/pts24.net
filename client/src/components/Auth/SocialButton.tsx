@@ -1,6 +1,15 @@
-import React from 'react';
-
+import React, { useEffect } from 'react';
+import * as microsoftTeams from '@microsoft/teams-js';
 const SocialButton = ({ id, enabled, serverDomain, oauthPath, Icon, label }) => {
+  useEffect(() => {
+    microsoftTeams.app.initialize();
+
+    // Teams 컨텍스트 가져오기
+    microsoftTeams.getContext((context) => {
+      console.log('Teams 컨텍스트:', context);
+    });
+  }, []);
+
   if (!enabled) {
     return null;
   }
@@ -11,11 +20,22 @@ const SocialButton = ({ id, enabled, serverDomain, oauthPath, Icon, label }) => 
     const height = 600;
     const left = window.screen.width / 2 - width / 2;
     const top = window.screen.height / 2 - height / 2;
-    window.open(
-      `${serverDomain}/oauth/${oauthPath}`,
-      'popup',
-      `width=${width},height=${height},left=${left},top=${top}`,
-    );
+    // window.open(
+    //   `${serverDomain}/oauth/${oauthPath}`,
+    //   'popup',
+    //   `width=${width},height=${height},left=${left},top=${top}`,
+    // );
+    microsoftTeams.authentication.authenticate({
+      url: `${serverDomain}/oauth/${oauthPath}`,
+      width,
+      height,
+      successCallback: (result) => {
+        console.log('인증 성공:', result);
+      },
+      failureCallback: (reason) => {
+        console.log('인증 실패:', reason);
+      },
+    });
   };
 
   return (

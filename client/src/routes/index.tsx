@@ -15,6 +15,7 @@ import ShareRoute from './ShareRoute';
 import ChatRoute from './ChatRoute';
 import Search from './Search';
 import Root from './Root';
+import Opener from '~/components/Auth/Opener';
 
 const AuthLayout = () => (
   <AuthContextProvider>
@@ -49,6 +50,10 @@ export const router = createBrowserRouter([
   {
     path: 'verify',
     element: <VerifyEmail />,
+  },
+  {
+    path: 'opener',
+    element: <Opener />,
   },
   {
     element: <AuthLayout />,
