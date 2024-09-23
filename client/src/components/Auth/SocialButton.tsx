@@ -54,9 +54,11 @@ const SocialButton = ({ id, enabled, serverDomain, oauthPath, Icon, label }) => 
     //     console.error('오류 발생:', reason);
     //   },
     // });
-    microsoftTeams.authentication.authenticate(taskInfo).then((result) => {
-      console.log('작업 완료:', result);
-      window.location.reload();
+    microsoftTeams.app.initialize().then(() => {
+      microsoftTeams.authentication.authenticate(taskInfo).then((result) => {
+        console.log('작업 완료:', result);
+        window.location.reload();
+      });
     });
   };
 
