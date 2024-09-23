@@ -42,17 +42,21 @@ const SocialButton = ({ id, enabled, serverDomain, oauthPath, Icon, label }) => 
       width: width,
       url: `${serverDomain}/oauth/${oauthPath}`,
     };
-    microsoftTeams.authentication.authenticate({
-      url: taskInfo.url,
-      width: 600,
-      height: 400,
-      successCallback: (result) => {
-        console.log('작업 완료:', result);
-        window.location.reload();
-      },
-      failureCallback: (reason) => {
-        console.error('오류 발생:', reason);
-      },
+    // microsoftTeams.authentication.authenticate({
+    //   url: taskInfo.url,
+    //   width: 600,
+    //   height: 400,
+    //   successCallback: (result) => {
+    //     console.log('작업 완료:', result);
+    //     window.location.reload();
+    //   },
+    //   failureCallback: (reason) => {
+    //     console.error('오류 발생:', reason);
+    //   },
+    // });
+    microsoftTeams.authentication.authenticate(taskInfo).then((result) => {
+      console.log('작업 완료:', result);
+      window.location.reload();
     });
   };
 
