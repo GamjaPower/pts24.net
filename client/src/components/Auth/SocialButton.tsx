@@ -1,21 +1,21 @@
 import React, { useEffect } from 'react';
 import * as microsoftTeams from '@microsoft/teams-js';
 const SocialButton = ({ id, enabled, serverDomain, oauthPath, Icon, label }) => {
-  useEffect(() => {
-    microsoftTeams.app.initialize();
+  // useEffect(() => {
+  //   microsoftTeams.app.initialize();
 
-    // Teams 컨텍스트 가져오기
-    microsoftTeams.getContext((context) => {
-      console.log('Teams 컨텍스트:', context);
-    });
-  }, []);
+  //   // Teams 컨텍스트 가져오기
+  //   microsoftTeams.getContext((context) => {
+  //     console.log('Teams 컨텍스트:', context);
+  //   });
+  // }, []);
 
   if (!enabled) {
     return null;
   }
 
-  const handleClick = (e) => {
-    e.preventDefault();
+  const handleClick = () => {
+    // e.preventDefault();
     const width = 600;
     const height = 600;
     const left = window.screen.width / 2 - width / 2;
@@ -25,15 +25,33 @@ const SocialButton = ({ id, enabled, serverDomain, oauthPath, Icon, label }) => 
     //   'popup',
     //   `width=${width},height=${height},left=${left},top=${top}`,
     // );
-    microsoftTeams.authentication.authenticate({
+    // microsoftTeams.authentication.authenticate({
+    //   url: `${serverDomain}/oauth/${oauthPath}`,
+    //   width,
+    //   height,
+    //   successCallback: (result) => {
+    //     console.log('인증 성공:', result);
+    //   },
+    //   failureCallback: (reason) => {
+    //     console.log('인증 실패:', reason);
+    //   },
+    // });
+    const taskInfo = {
+      title: 'title',
+      height: height,
+      width: width,
       url: `${serverDomain}/oauth/${oauthPath}`,
-      width,
-      height,
+    };
+    microsoftTeams.authentication.authenticate({
+      url: taskInfo.url,
+      width: 600,
+      height: 400,
       successCallback: (result) => {
-        console.log('인증 성공:', result);
+        console.log('작업 완료:', result);
+        window.location.reload();
       },
       failureCallback: (reason) => {
-        console.log('인증 실패:', reason);
+        console.error('오류 발생:', reason);
       },
     });
   };
